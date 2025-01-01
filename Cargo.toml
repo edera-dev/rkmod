@@ -1,0 +1,28 @@
+[package]
+name = "rkmod"
+description = "kmod library in Rust"
+license = "Apache-2.0"
+version = "0.1.0"
+edition = "2021"
+
+[features]
+default = ["compression-all", "file-mmap"]
+file-mmap = ["dep:memmap2"]
+compression-all = ["compression-gzip", "compression-xz2", "compression-zlib", "compression-zstd"]
+compression-gzip = ["dep:flate2", "compression-used"]
+compression-used = []
+compression-xz2 = ["dep:xz2", "compression-used"]
+compression-zstd = ["dep:zstd", "compression-used"]
+compression-zlib = ["dep:flate2", "compression-used"]
+
+[dependencies]
+bytes = "1.9.0"
+elf = "0.7.4"
+flate2 = {  version = "1.0.35", optional = true }
+memmap2 = { version = "0.9.5", optional = true }
+thiserror = "2.0.9"
+xz2 = { version = "0.1.7", optional = true }
+zstd = { version = "0.13.2", optional = true }
+
+[lib]
+name = "rkmod"
