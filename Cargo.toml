@@ -19,10 +19,14 @@ compression-zlib = ["dep:flate2", "compression-used"]
 bytes = "1.9.0"
 elf = "0.7.4"
 flate2 = {  version = "1.0.35", optional = true }
+indexmap = "2.7.0"
 memmap2 = { version = "0.9.5", optional = true }
 thiserror = "2.0.9"
 xz2 = { version = "0.1.7", optional = true }
 zstd = { version = "0.13.2", optional = true }
+
+[dev-dependencies]
+easy-parallel = "3.3.1"
 
 [lib]
 name = "rkmod"

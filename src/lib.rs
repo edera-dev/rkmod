@@ -13,9 +13,13 @@ pub mod compression;
 /// in this Rust module provide access to raw file contents using
 /// the [bytes] crate, which provides cheaply cloneable access to
 /// bytes.
-pub mod content;
+pub mod elf;
 pub mod error;
 pub mod util;
 
+pub mod deps;
+pub mod ko;
 #[cfg(feature = "file-mmap")]
 pub mod mmap;
+pub mod symbol;
+pub mod textual;

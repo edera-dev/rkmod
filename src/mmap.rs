@@ -1,8 +1,8 @@
 use crate::error::Result;
+use bytes::Bytes;
 use memmap2::Mmap;
 use std::fs::File;
 use std::sync::Arc;
-use bytes::Bytes;
 
 #[derive(Clone)]
 pub struct OwnedMappedFile {

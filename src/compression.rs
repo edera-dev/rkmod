@@ -1,6 +1,6 @@
-use bytes::Bytes;
 #[cfg(feature = "compression-used")]
 use bytes::Buf;
+use bytes::Bytes;
 use std::io::Read;
 
 use crate::error::Result;
