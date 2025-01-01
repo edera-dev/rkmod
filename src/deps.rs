@@ -24,7 +24,13 @@ impl ModuleDependencies {
     }
 
     pub fn insert(&mut self, module: String, deps: Vec<String>) {
-        self.deps.insert(module, deps);
+        let modules = self.deps.entry(module).or_default();
+        let is_empty = modules.is_empty();
+        for dep in deps {
+            if is_empty || !modules.contains(&dep) {
+                modules.push(dep);
+            }
+        }
     }
 
     pub fn get(&self, module: &str) -> &[String] {

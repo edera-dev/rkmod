@@ -5,6 +5,6 @@ fn main() {
     let ko = KernelObject::open(path).expect("failed to open kernel object");
     let symbols = ko.dependency_symbols().expect("failed to get symbols");
     for symbol in symbols {
-        println!("symbol: {:?}", symbol);
+        println!("symbol: {:?}", symbol.name());
     }
 }

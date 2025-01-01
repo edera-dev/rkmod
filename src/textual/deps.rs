@@ -7,9 +7,8 @@ use std::path::Path;
 pub struct TextualModuleDependencies;
 
 impl TextualModuleDependencies {
-    pub fn parse(bytes: Bytes) -> ModuleDependencies {
+    pub fn parse(bytes: Bytes, deps: &mut ModuleDependencies) {
         let string = String::from_utf8_lossy(&bytes);
-        let mut deps = ModuleDependencies::new();
         for line in string.split("\n") {
             if !line.contains(":") {
                 continue;
@@ -29,11 +28,11 @@ impl TextualModuleDependencies {
                 .collect();
             deps.insert(module.to_string(), module_deps);
         }
-        deps
     }
 
-    pub fn load(path: impl AsRef<Path>) -> Result<ModuleDependencies> {
+    pub fn load(path: impl AsRef<Path>, deps: &mut ModuleDependencies) -> Result<()> {
         let bytes = open_file_bytes(path)?;
-        Ok(TextualModuleDependencies::parse(bytes))
+        Self::parse(bytes, deps);
+        Ok(())
     }
 }
