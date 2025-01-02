@@ -1,3 +1,4 @@
+use crate::cache::InternCache;
 use crate::elf::ElfContent;
 use crate::error::Result;
 use crate::symbol::KernelSymbol;
@@ -8,16 +9,17 @@ use std::path::Path;
 #[derive(Clone)]
 pub struct KernelObject {
     contents: ElfContent,
+    cache: InternCache,
 }
 
 impl KernelObject {
-    pub fn new(contents: ElfContent) -> Self {
-        Self { contents }
+    pub fn new(contents: ElfContent, cache: InternCache) -> Self {
+        Self { contents, cache }
     }
 
-    pub fn open(path: impl AsRef<Path>) -> Result<Self> {
+    pub fn open(path: impl AsRef<Path>, cache: InternCache) -> Result<Self> {
         let contents = ElfContent::open(path)?.decompress()?;
-        Ok(Self { contents })
+        Ok(Self { contents, cache })
     }
 
     pub fn collect_symbols(
@@ -34,7 +36,9 @@ impl KernelObject {
             let name = strtab.get(symbol.st_name as usize)?;
 
             if accept(&symbol, name) {
-                let symbol = KernelSymbol::new(name.to_string());
+                let name = name.to_string();
+                let name = self.cache.get_string(name);
+                let symbol = KernelSymbol::new(name);
                 kernel_symbols.push(symbol);
             }
         }

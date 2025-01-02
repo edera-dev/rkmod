@@ -1,14 +1,16 @@
+use std::sync::Arc;
+
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub struct KernelSymbol {
-    name: String,
+    name: Arc<String>,
 }
 
 impl KernelSymbol {
-    pub fn new(name: String) -> KernelSymbol {
+    pub fn new(name: Arc<String>) -> KernelSymbol {
         KernelSymbol { name }
     }
 
-    pub fn name(&self) -> &str {
+    pub fn name(&self) -> &Arc<String> {
         &self.name
     }
 }

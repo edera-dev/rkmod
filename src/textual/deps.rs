@@ -1,8 +1,8 @@
-use crate::deps::ModuleDependencies;
+use crate::deps::{ModuleDependencies, ModuleDependency, ModuleDependencyForm};
 use crate::error::Result;
 use crate::util::open_file_bytes;
 use bytes::Bytes;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 pub struct TextualModuleDependencies;
 
@@ -21,12 +21,20 @@ impl TextualModuleDependencies {
                 continue;
             }
 
-            let module_deps: Vec<String> = dep_list
+            let module = PathBuf::from(module);
+            let module = deps.cache().get_path(module);
+
+            let module_deps: Vec<ModuleDependency> = dep_list
                 .split(" ")
                 .filter(|dep| !dep.is_empty())
                 .map(|dep| dep.trim().to_string())
+                .map(|dep| {
+                    let dep = PathBuf::from(dep);
+                    let dep = deps.cache().get_path(dep);
+                    ModuleDependency::new(dep, ModuleDependencyForm::Direct)
+                })
                 .collect();
-            deps.insert(module.to_string(), module_deps);
+            deps.insert(module, module_deps);
         }
     }
 

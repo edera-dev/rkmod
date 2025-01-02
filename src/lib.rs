@@ -17,6 +17,7 @@ pub mod elf;
 pub mod error;
 pub mod util;
 
+pub mod cache;
 pub mod deps;
 pub mod ko;
 #[cfg(feature = "file-mmap")]
