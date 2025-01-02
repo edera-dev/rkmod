@@ -19,17 +19,17 @@ pub enum ModuleDependencyForm {
 
 #[derive(Eq, PartialEq, Hash, Clone, Debug)]
 pub struct ModuleDependency {
-    path: Arc<PathBuf>,
+    name: Arc<String>,
     form: ModuleDependencyForm,
 }
 
 impl ModuleDependency {
-    pub fn new(path: Arc<PathBuf>, form: ModuleDependencyForm) -> Self {
-        Self { path, form }
+    pub fn new(name: Arc<String>, form: ModuleDependencyForm) -> Self {
+        Self { name, form }
     }
 
-    pub fn path(&self) -> &Arc<PathBuf> {
-        &self.path
+    pub fn name(&self) -> &Arc<String> {
+        &self.name
     }
 
     pub fn form(&self) -> &ModuleDependencyForm {
@@ -42,42 +42,80 @@ impl ModuleDependency {
 }
 
 #[derive(Clone, Debug)]
-pub struct ModuleDependencies {
-    dependencies: IndexMap<Arc<PathBuf>, IndexMap<Arc<PathBuf>, ModuleDependency>>,
-    cache: InternCache,
+pub struct ModuleInfo {
+    name: Arc<String>,
+    dependencies: IndexMap<Arc<String>, ModuleDependency>,
+    path: Option<Arc<PathBuf>>,
 }
 
-impl ModuleDependencies {
-    pub fn all(&self) -> &IndexMap<Arc<PathBuf>, IndexMap<Arc<PathBuf>, ModuleDependency>> {
+impl ModuleInfo {
+    pub fn new(name: Arc<String>) -> Self {
+        Self {
+            name,
+            dependencies: IndexMap::new(),
+            path: None,
+        }
+    }
+
+    pub fn name(&self) -> &Arc<String> {
+        &self.name
+    }
+
+    pub fn path(&self) -> &Option<Arc<PathBuf>> {
+        &self.path
+    }
+
+    pub fn dependencies(&self) -> &IndexMap<Arc<String>, ModuleDependency> {
         &self.dependencies
     }
 
+    pub fn set_path(&mut self, path: Option<Arc<PathBuf>>) {
+        self.path = path;
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct ModuleDatabase {
+    modules: IndexMap<Arc<String>, ModuleInfo>,
+    cache: InternCache,
+}
+
+impl ModuleDatabase {
     pub fn cache(&self) -> &InternCache {
         &self.cache
     }
 }
 
-impl ModuleDependencies {
+impl ModuleDatabase {
     pub fn new(cache: InternCache) -> Self {
         Self {
-            dependencies: IndexMap::new(),
+            modules: IndexMap::new(),
             cache,
         }
     }
 
-    pub fn insert(&mut self, module: Arc<PathBuf>, deps: Vec<ModuleDependency>) {
-        let dependencies = self.dependencies.entry(module).or_default();
-        for dep in deps {
-            dependencies
-                .entry(dep.path.clone())
-                .or_insert_with(|| ModuleDependency::new(dep.path().clone(), dep.form.clone()));
-        }
+    pub fn modules(&self) -> &IndexMap<Arc<String>, ModuleInfo> {
+        &self.modules
     }
 
-    pub fn get(&self, module: &Arc<PathBuf>) -> impl Iterator<Item = &ModuleDependency> {
-        self.dependencies
-            .get(module)
-            .map(|dep| dep.values())
-            .unwrap_or_default()
+    pub fn update_dependencies(
+        &mut self,
+        module: Arc<String>,
+        deps: Vec<ModuleDependency>,
+        path: Option<Arc<PathBuf>>,
+    ) {
+        let info = self
+            .modules
+            .entry(module)
+            .or_insert_with_key(|key| ModuleInfo::new(key.clone()));
+        for dep in deps {
+            info.dependencies
+                .entry(dep.name().clone())
+                .or_insert_with(|| ModuleDependency::new(dep.name().clone(), dep.form.clone()));
+        }
+
+        if path.is_some() {
+            info.set_path(path);
+        }
     }
 }

@@ -3,6 +3,7 @@ use crate::mmap::OwnedMappedFile;
 use bytes::Bytes;
 use std::fs;
 use std::path::Path;
+use std::ptr::addr_of_mut;
 
 pub fn check_magic_header(magic: &[u8], data: &[u8]) -> bool {
     if data.len() < magic.len() {
@@ -23,4 +24,30 @@ pub fn open_file_bytes(path: impl AsRef<Path>) -> Result<Bytes> {
 pub fn open_file_bytes(path: impl AsRef<Path>) -> Result<Bytes> {
     let content = fs::read(path)?;
     Ok(Bytes::from_owner(content))
+}
+
+pub fn path_to_module_name(path: impl AsRef<Path>) -> String {
+    let path = path.as_ref();
+    path.file_name()
+        .map(|name| name.to_string_lossy())
+        .map(|name| {
+            name.split_once(".")
+                .map(|(first, _second)| first.to_string())
+                .unwrap_or_else(|| name.to_string())
+        })
+        .unwrap_or_default()
+}
+
+pub fn active_kernel_release() -> Option<String> {
+    unsafe {
+        let mut uts: libc::utsname = std::mem::zeroed();
+        let _ = libc::uname(addr_of_mut!(uts));
+        let release_bytes: Vec<u8> = uts
+            .release
+            .into_iter()
+            .map(|x| x as u8)
+            .take_while(|x| *x != 0)
+            .collect();
+        String::from_utf8(release_bytes).ok()
+    }
 }

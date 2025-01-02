@@ -1,25 +1,29 @@
 use easy_parallel::Parallel;
 use rkmod::cache::InternCache;
-use rkmod::deps::ModuleDependencies;
+use rkmod::deps::ModuleDatabase;
 use rkmod::ko::KernelObject;
 use rkmod::textual::deps::TextualModuleDependencies;
 use std::path::PathBuf;
 
 fn main() {
     let path = std::env::args().nth(1).expect("path required");
-    let path = PathBuf::from(path);
+    let root = PathBuf::from(path);
 
     let cache = InternCache::new();
-    let mut deps = ModuleDependencies::new(cache.clone());
-    TextualModuleDependencies::load(path.join("modules.dep"), &mut deps)
+    let mut database = ModuleDatabase::new(cache.clone());
+    TextualModuleDependencies::load(root.join("modules.dep"), &mut database)
         .expect("failed to load dependencies");
 
     Parallel::new()
-        .each(deps.all().keys(), |module| {
-            let path = path.join(module.as_ref());
-            let ko = KernelObject::open(path, cache.clone()).expect("failed to open module");
+        .each(database.modules().values(), |module| {
+            let Some(path) = module.path() else {
+                return;
+            };
+
+            let full = root.join(path.as_path());
+            let ko = KernelObject::open(full, cache.clone()).expect("failed to open module");
             let symbols = ko.dependency_symbols().expect("failed to fetch symbols");
-            println!("{}: {} symbols", module.to_string_lossy(), symbols.len());
+            println!("{}: {} symbols", module.name(), symbols.len());
         })
         .run();
 }

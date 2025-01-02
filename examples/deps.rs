@@ -1,5 +1,5 @@
 use rkmod::cache::InternCache;
-use rkmod::deps::ModuleDependencies;
+use rkmod::deps::ModuleDatabase;
 use rkmod::textual::deps::TextualModuleDependencies;
 use std::path::PathBuf;
 
@@ -8,7 +8,7 @@ fn main() {
     let path = PathBuf::from(path);
 
     let cache = InternCache::new();
-    let mut deps = ModuleDependencies::new(cache);
+    let mut deps = ModuleDatabase::new(cache);
     TextualModuleDependencies::load(path.join("modules.dep"), &mut deps)
         .expect("failed to load dependencies");
 
