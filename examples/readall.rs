@@ -1,7 +1,8 @@
 use easy_parallel::Parallel;
 use rkmod::cache::InternCache;
-use rkmod::deps::ModuleDatabase;
+use rkmod::database::ModuleDatabase;
 use rkmod::ko::KernelObject;
+use rkmod::textual::builtins::TextualModuleBuiltins;
 use rkmod::textual::deps::TextualModuleDependencies;
 use std::path::PathBuf;
 
@@ -13,6 +14,8 @@ fn main() {
     let mut database = ModuleDatabase::new(cache.clone());
     TextualModuleDependencies::load(root.join("modules.dep"), &mut database)
         .expect("failed to load dependencies");
+    TextualModuleBuiltins::load(root.join("modules.builtin"), &mut database)
+        .expect("failed to load builtins");
 
     Parallel::new()
         .each(database.modules().values(), |module| {

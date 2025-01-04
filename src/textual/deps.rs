@@ -1,4 +1,4 @@
-use crate::deps::{ModuleDatabase, ModuleDependency, ModuleDependencyForm};
+use crate::database::{ModuleDatabase, ModuleDependency, ModuleDependencyForm};
 use crate::error::Result;
 use crate::util::{open_file_bytes, path_to_module_name};
 use bytes::Bytes;
@@ -7,9 +7,9 @@ use std::path::{Path, PathBuf};
 pub struct TextualModuleDependencies;
 
 impl TextualModuleDependencies {
-    pub fn parse(bytes: Bytes, database: &mut ModuleDatabase) {
+    pub fn parse(bytes: Bytes, database: &mut ModuleDatabase) -> Result<()> {
         let string = String::from_utf8_lossy(&bytes);
-        for line in string.split("\n") {
+        for line in string.lines() {
             if !line.contains(":") {
                 continue;
             }
@@ -38,11 +38,12 @@ impl TextualModuleDependencies {
                 .collect();
             database.update_dependencies(module, module_deps, Some(path));
         }
+        Ok(())
     }
 
     pub fn load(path: impl AsRef<Path>, database: &mut ModuleDatabase) -> Result<()> {
         let bytes = open_file_bytes(path)?;
-        Self::parse(bytes, database);
+        Self::parse(bytes, database)?;
         Ok(())
     }
 }

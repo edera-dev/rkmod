@@ -4,29 +4,33 @@ use crate::error::Result;
 use crate::symbol::KernelSymbol;
 use elf::abi::SHN_UNDEF;
 use elf::symbol::Symbol;
+use std::ffi::CStr;
 use std::path::Path;
 
 #[derive(Clone)]
 pub struct KernelObject {
-    contents: ElfContent,
+    content: ElfContent,
     cache: InternCache,
 }
 
 impl KernelObject {
-    pub fn new(contents: ElfContent, cache: InternCache) -> Self {
-        Self { contents, cache }
+    pub fn new(content: ElfContent, cache: InternCache) -> Self {
+        Self { content, cache }
     }
 
     pub fn open(path: impl AsRef<Path>, cache: InternCache) -> Result<Self> {
         let contents = ElfContent::open(path)?.decompress()?;
-        Ok(Self { contents, cache })
+        Ok(Self {
+            content: contents,
+            cache,
+        })
     }
 
     pub fn collect_symbols(
         &self,
         accept: impl Fn(&Symbol, &str) -> bool,
     ) -> Result<Vec<KernelSymbol>> {
-        let elf = self.contents.read_elf()?;
+        let elf = self.content.read_elf()?;
         let Ok(Some((symbols, strtab))) = elf.symbol_table() else {
             return Ok(Vec::new());
         };
@@ -49,5 +53,16 @@ impl KernelObject {
         self.collect_symbols(|symbol, symbol_name| {
             symbol.st_shndx == SHN_UNDEF && !symbol_name.is_empty()
         })
+    }
+
+    /// Inserts the module into the kernel with the specified command line.
+    ///
+    /// # Safety
+    ///
+    /// This function does not check anything about the module prior to insertion.
+    /// Do not use this function directly unless you know what you are doing.
+    pub unsafe fn insert_into_kernel(&self, cmdline: impl AsRef<CStr>) -> Result<()> {
+        nix::kmod::init_module(self.content.bytes(), cmdline.as_ref())?;
+        Ok(())
     }
 }

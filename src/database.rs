@@ -41,16 +41,25 @@ impl ModuleDependency {
     }
 }
 
+#[derive(Eq, PartialEq, Hash, Clone, Debug)]
+pub enum ModuleForm {
+    Missing,
+    File,
+    Builtin,
+}
+
 #[derive(Clone, Debug)]
 pub struct ModuleInfo {
     name: Arc<String>,
     dependencies: IndexMap<Arc<String>, ModuleDependency>,
     path: Option<Arc<PathBuf>>,
+    form: ModuleForm,
 }
 
 impl ModuleInfo {
     pub fn new(name: Arc<String>) -> Self {
         Self {
+            form: ModuleForm::Missing,
             name,
             dependencies: IndexMap::new(),
             path: None,
@@ -67,6 +76,14 @@ impl ModuleInfo {
 
     pub fn dependencies(&self) -> &IndexMap<Arc<String>, ModuleDependency> {
         &self.dependencies
+    }
+
+    pub fn form(&self) -> &ModuleForm {
+        &self.form
+    }
+
+    pub fn set_form(&mut self, form: ModuleForm) {
+        self.form = form;
     }
 
     pub fn set_path(&mut self, path: Option<Arc<PathBuf>>) {
@@ -98,6 +115,14 @@ impl ModuleDatabase {
         &self.modules
     }
 
+    pub fn mark_builtin(&mut self, module: Arc<String>) {
+        let info = self
+            .modules
+            .entry(module)
+            .or_insert_with_key(|key| ModuleInfo::new(key.clone()));
+        info.set_form(ModuleForm::Builtin);
+    }
+
     pub fn update_dependencies(
         &mut self,
         module: Arc<String>,
@@ -116,6 +141,7 @@ impl ModuleDatabase {
 
         if path.is_some() {
             info.set_path(path);
+            info.set_form(ModuleForm::File)
         }
     }
 }
