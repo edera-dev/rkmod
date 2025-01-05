@@ -24,21 +24,27 @@ pub fn open_file_bytes(path: impl AsRef<Path>) -> Result<Bytes> {
     Ok(Bytes::from_owner(content))
 }
 
-pub fn path_to_module_name(path: impl AsRef<Path>) -> String {
-    let path = path.as_ref();
-    path.file_name()
-        .map(|name| name.to_string_lossy())
-        .map(|name| {
-            name.split_once(".")
-                .map(|(first, _second)| first.to_string())
-                .unwrap_or_else(|| name.to_string())
-        })
-        .unwrap_or_default()
+pub fn normalize_module_name(name: String) -> String {
+    name.replace("-", "_")
 }
 
-#[cfg(feature = "active-release")]
+pub fn path_to_module_name(path: impl AsRef<Path>) -> String {
+    let path = path.as_ref();
+    normalize_module_name(
+        path.file_name()
+            .map(|name| name.to_string_lossy())
+            .map(|name| {
+                name.split_once(".")
+                    .map(|(first, _second)| first.to_string())
+                    .unwrap_or_else(|| name.to_string())
+            })
+            .unwrap_or_default(),
+    )
+}
+
+#[cfg(feature = "current-kernel")]
 #[cfg(target_os = "linux")]
-pub fn active_kernel_release() -> Option<String> {
+pub fn current_kernel_release() -> Option<String> {
     unsafe {
         let mut uts: libc::utsname = std::mem::zeroed();
         let _ = libc::uname(std::ptr::addr_of_mut!(uts));

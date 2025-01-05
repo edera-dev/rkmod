@@ -14,6 +14,9 @@ pub enum Error {
     DependencyLoop(Arc<String>),
     #[error("dependency missing: {0}")]
     DependencyMissing(Arc<String>),
+    #[error("unknown kernel release")]
+    #[cfg(feature = "current-kernel")]
+    UnknownKernelRelease,
 }
 
 pub type Result<T> = std::result::Result<T, Error>;

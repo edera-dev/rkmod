@@ -1,8 +1,9 @@
 use crate::cache::InternCache;
 use crate::database::textual::TextualModuleDatabase;
 use crate::database::ModuleDatabase;
-use crate::error::Result;
+use crate::error::{Error, Result};
 use crate::object::KernelObject;
+use crate::util::current_kernel_release;
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
 
@@ -41,5 +42,15 @@ impl ModuleDirectory {
             database.cache().get_path(root.as_ref().to_path_buf()),
             database,
         ))
+    }
+
+    const LIB_MODULES_PATH: &'static str = "/lib/modules";
+
+    #[cfg(feature = "current-kernel")]
+    pub fn current(cache: InternCache) -> Result<Self> {
+        let current_kernel_release =
+            cache.get_string(current_kernel_release().ok_or(Error::UnknownKernelRelease)?);
+        let root = PathBuf::from(Self::LIB_MODULES_PATH).join(&*current_kernel_release);
+        Self::open(root, cache)
     }
 }

@@ -6,7 +6,7 @@ version = "0.1.0"
 edition = "2021"
 
 [features]
-default = ["compression-all", "file-mmap", "cache-intern", "module-load", "active-release"]
+default = ["compression-all", "file-mmap", "cache-intern", "module-load", "current-kernel"]
 file-mmap = ["dep:memmap2"]
 cache-intern = ["dep:dashmap"]
 compression-all = ["compression-gzip", "compression-xz2", "compression-zlib", "compression-zstd"]
@@ -16,7 +16,7 @@ compression-xz2 = ["dep:xz2", "compression-used"]
 compression-zstd = ["dep:zstd", "compression-used"]
 compression-zlib = ["dep:flate2", "compression-used"]
 module-load = ["dep:nix"]
-active-release = ["dep:libc"]
+current-kernel = ["dep:libc"]
 
 [dependencies]
 bstr = "1.11.3"

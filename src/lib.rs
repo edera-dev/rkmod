@@ -18,6 +18,7 @@ pub mod error;
 pub mod util;
 
 pub mod cache;
+pub mod controller;
 pub mod database;
 pub mod directory;
 #[cfg(feature = "file-mmap")]
