@@ -4,7 +4,6 @@ use crate::error::Result;
 use crate::symbol::KernelSymbol;
 use elf::abi::SHN_UNDEF;
 use elf::symbol::Symbol;
-use std::ffi::CStr;
 use std::path::Path;
 
 #[derive(Clone)]
@@ -61,7 +60,8 @@ impl KernelObject {
     ///
     /// This function does not check anything about the module prior to insertion.
     /// Do not use this function directly unless you know what you are doing.
-    pub unsafe fn insert_into_kernel(&self, cmdline: impl AsRef<CStr>) -> Result<()> {
+    #[cfg(feature = "module-load")]
+    pub unsafe fn insert_into_kernel(&self, cmdline: impl AsRef<std::ffi::CStr>) -> Result<()> {
         nix::kmod::init_module(self.content.bytes(), cmdline.as_ref())?;
         Ok(())
     }

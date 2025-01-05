@@ -2,7 +2,6 @@ use crate::error::Result;
 use bytes::Bytes;
 use std::fs;
 use std::path::Path;
-use std::ptr::addr_of_mut;
 
 pub fn check_magic_header(magic: &[u8], data: &[u8]) -> bool {
     if data.len() < magic.len() {
@@ -37,10 +36,12 @@ pub fn path_to_module_name(path: impl AsRef<Path>) -> String {
         .unwrap_or_default()
 }
 
+#[cfg(feature = "active-release")]
+#[cfg(target_os = "linux")]
 pub fn active_kernel_release() -> Option<String> {
     unsafe {
         let mut uts: libc::utsname = std::mem::zeroed();
-        let _ = libc::uname(addr_of_mut!(uts));
+        let _ = libc::uname(std::ptr::addr_of_mut!(uts));
         let release_bytes: Vec<u8> = uts
             .release
             .into_iter()

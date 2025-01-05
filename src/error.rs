@@ -8,6 +8,7 @@ pub enum Error {
     #[error("io error: {0}")]
     Io(#[from] std::io::Error),
     #[error("nix error: {0}")]
+    #[cfg(feature = "module-load")]
     NixError(#[from] nix::errno::Errno),
     #[error("dependency loop found on {0}")]
     DependencyLoop(Arc<String>),
