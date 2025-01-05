@@ -1,16 +1,16 @@
 use easy_parallel::Parallel;
 use rkmod::cache::InternCache;
+use rkmod::database::textual::builtins::TextualModuleBuiltins;
+use rkmod::database::textual::deps::TextualModuleDependencies;
 use rkmod::database::ModuleDatabase;
-use rkmod::ko::KernelObject;
-use rkmod::textual::builtins::TextualModuleBuiltins;
-use rkmod::textual::deps::TextualModuleDependencies;
+use rkmod::object::KernelObject;
 use std::path::PathBuf;
 
 fn main() {
     let path = std::env::args().nth(1).expect("path required");
     let root = PathBuf::from(path);
 
-    let cache = InternCache::new();
+    let cache = InternCache::default();
     let mut database = ModuleDatabase::new(cache.clone());
     TextualModuleDependencies::load(root.join("modules.dep"), &mut database)
         .expect("failed to load dependencies");

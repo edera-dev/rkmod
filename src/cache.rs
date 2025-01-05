@@ -1,51 +1,98 @@
-use dashmap::DashMap;
 use std::fmt::Debug;
 use std::path::PathBuf;
 use std::sync::Arc;
 
-#[derive(Clone, Default)]
+#[derive(Clone)]
 pub struct InternCache {
-    #[cfg(feature = "intern-cache")]
-    strings: Arc<DashMap<Arc<String>, Arc<String>>>,
-    #[cfg(feature = "intern-cache")]
-    paths: Arc<DashMap<Arc<PathBuf>, Arc<PathBuf>>>,
+    #[cfg(feature = "cache-intern")]
+    strings: Option<Arc<dashmap::DashMap<Arc<String>, Arc<String>>>>,
+    #[cfg(feature = "cache-intern")]
+    paths: Option<Arc<dashmap::DashMap<Arc<PathBuf>, Arc<PathBuf>>>>,
+}
+
+impl Default for InternCache {
+    #[cfg(feature = "cache-intern")]
+    fn default() -> Self {
+        InternCache::cached()
+    }
+
+    #[cfg(not(feature = "cache-intern"))]
+    fn default() -> Self {
+        InternCache::uncached()
+    }
 }
 
 impl InternCache {
-    pub fn new() -> Self {
-        Self::default()
+    #[cfg(feature = "cache-intern")]
+    pub fn cached() -> Self {
+        Self {
+            strings: Some(Arc::new(dashmap::DashMap::new())),
+            paths: Some(Arc::new(dashmap::DashMap::new())),
+        }
     }
 
-    #[cfg(feature = "intern-cache")]
+    #[cfg(feature = "cache-intern")]
+    pub fn uncached() -> Self {
+        Self {
+            strings: None,
+            paths: None,
+        }
+    }
+
+    #[cfg(not(feature = "cache-intern"))]
+    pub fn uncached() -> Self {
+        Self {}
+    }
+
+    #[cfg(feature = "cache-intern")]
     pub fn get_string(&self, key: String) -> Arc<String> {
         let key = Arc::new(key);
-        self.strings.entry(key.clone()).or_insert(key).clone()
+        match self.strings.as_ref() {
+            Some(strings) => strings.entry(key.clone()).or_insert(key).clone(),
+            None => key,
+        }
     }
 
-    #[cfg(not(feature = "intern-cache"))]
+    #[cfg(not(feature = "cache-intern"))]
     pub fn get_string(&self, key: String) -> Arc<String> {
         Arc::new(key)
     }
 
-    #[cfg(feature = "intern-cache")]
+    #[cfg(feature = "cache-intern")]
     pub fn get_path(&self, key: PathBuf) -> Arc<PathBuf> {
         let key = Arc::new(key);
-        self.paths.entry(key.clone()).or_insert(key).clone()
+        match self.paths.as_ref() {
+            Some(paths) => paths.entry(key.clone()).or_insert(key).clone(),
+            None => key,
+        }
     }
 
-    #[cfg(not(feature = "intern-cache"))]
+    #[cfg(not(feature = "cache-intern"))]
     pub fn get_path(&self, key: PathBuf) -> Arc<PathBuf> {
         Arc::new(key)
     }
 }
 
 impl Debug for InternCache {
+    #[cfg(feature = "cache-intern")]
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            "InternCache {{ strings = {}, paths = {} }}",
-            self.strings.len(),
-            self.paths.len()
-        )
+        match (self.strings.as_ref(), self.paths.as_ref()) {
+            (Some(strings), Some(paths)) => {
+                write!(
+                    f,
+                    "InternCache {{ strings = {}, paths = {} }}",
+                    strings.len(),
+                    paths.len(),
+                )
+            }
+            _ => {
+                write!(f, "InternCache {{ }}")
+            }
+        }
+    }
+
+    #[cfg(not(feature = "cache-intern"))]
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "InternCache {{ }}")
     }
 }

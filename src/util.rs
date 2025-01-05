@@ -1,5 +1,4 @@
 use crate::error::Result;
-use crate::mmap::OwnedMappedFile;
 use bytes::Bytes;
 use std::fs;
 use std::path::Path;
@@ -15,7 +14,7 @@ pub fn check_magic_header(magic: &[u8], data: &[u8]) -> bool {
 #[cfg(feature = "file-mmap")]
 pub fn open_file_bytes(path: impl AsRef<Path>) -> Result<Bytes> {
     let file = fs::File::open(path)?;
-    let mapped = OwnedMappedFile::map(file)?;
+    let mapped = crate::mmap::OwnedMappedFile::map(file)?;
     let bytes = Bytes::from_owner(mapped);
     Ok(bytes)
 }

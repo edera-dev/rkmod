@@ -19,8 +19,7 @@ pub mod util;
 
 pub mod cache;
 pub mod database;
-pub mod ko;
 #[cfg(feature = "file-mmap")]
 pub mod mmap;
+pub mod object;
 pub mod symbol;
-pub mod textual;
