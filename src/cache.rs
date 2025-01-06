@@ -45,8 +45,8 @@ impl InternCache {
     }
 
     #[cfg(feature = "cache-intern")]
-    pub fn get_string(&self, key: String) -> Arc<String> {
-        let key = Arc::new(key);
+    pub fn get_string(&self, key: impl Into<String>) -> Arc<String> {
+        let key = Arc::new(key.into());
         match self.strings.as_ref() {
             Some(strings) => strings.entry(key.clone()).or_insert(key).clone(),
             None => key,

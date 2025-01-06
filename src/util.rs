@@ -24,8 +24,8 @@ pub fn open_file_bytes(path: impl AsRef<Path>) -> Result<Bytes> {
     Ok(Bytes::from_owner(content))
 }
 
-pub fn normalize_module_name(name: String) -> String {
-    name.replace("-", "_")
+pub fn normalize_module_name(name: impl Into<String>) -> String {
+    name.into().replace("-", "_")
 }
 
 pub fn path_to_module_name(path: impl AsRef<Path>) -> String {

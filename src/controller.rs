@@ -2,17 +2,17 @@ use crate::error::Result;
 use std::fs;
 use std::path::PathBuf;
 
-pub struct ModuleController {
+pub struct SystemModuleController {
     root: PathBuf,
 }
 
-impl Default for ModuleController {
+impl Default for SystemModuleController {
     fn default() -> Self {
         Self::new(PathBuf::from("/sys/module"))
     }
 }
 
-impl ModuleController {
+impl SystemModuleController {
     pub fn new(root: impl Into<PathBuf>) -> Self {
         Self { root: root.into() }
     }

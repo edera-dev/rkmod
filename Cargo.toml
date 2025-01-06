@@ -6,7 +6,7 @@ version = "0.1.0"
 edition = "2021"
 
 [features]
-default = ["compression-all", "file-mmap", "cache-intern", "module-load", "current-kernel"]
+default = ["compression-all", "file-mmap", "cache-intern", "module-manager", "current-kernel"]
 file-mmap = ["dep:memmap2"]
 cache-intern = ["dep:dashmap"]
 compression-all = ["compression-gzip", "compression-xz2", "compression-zlib", "compression-zstd"]
@@ -15,7 +15,7 @@ compression-used = []
 compression-xz2 = ["dep:xz2", "compression-used"]
 compression-zstd = ["dep:zstd", "compression-used"]
 compression-zlib = ["dep:flate2", "compression-used"]
-module-load = ["dep:nix"]
+module-manager = ["dep:nix"]
 current-kernel = ["dep:libc"]
 
 [dependencies]
@@ -41,4 +41,4 @@ name = "rkmod"
 [[bin]]
 name = "insmod"
 path = "bin/insmod.rs"
-required-features = ["module-load"]
+required-features = ["module-manager"]

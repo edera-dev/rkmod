@@ -1,5 +1,5 @@
 use rkmod::cache::InternCache;
-use rkmod::controller::ModuleController;
+use rkmod::controller::SystemModuleController;
 use rkmod::database::resolution::ModuleResolutionSet;
 use rkmod::directory::ModuleDirectory;
 use rkmod::util::normalize_module_name;
@@ -19,7 +19,7 @@ fn main() {
             .add(directory.database(), module)
             .expect("failed to add module");
     }
-    let controller = ModuleController::default();
+    let controller = SystemModuleController::default();
     for module in resolution.modules() {
         if controller
             .is_live(module.as_ref())

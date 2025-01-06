@@ -21,6 +21,8 @@ pub mod cache;
 pub mod controller;
 pub mod database;
 pub mod directory;
+#[cfg(feature = "module-manager")]
+pub mod manager;
 #[cfg(feature = "file-mmap")]
 pub mod mmap;
 pub mod object;
