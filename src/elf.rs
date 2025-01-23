@@ -2,13 +2,11 @@ use crate::error::Result;
 use crate::util::open_file_bytes;
 use crate::{compression::CompressionFormat, util::check_magic_header};
 use bytes::{BufMut, Bytes, BytesMut};
-use elf::{endian::LittleEndian, ElfBytes};
+use elf::{endian::AnyEndian, ElfBytes};
 use std::io;
 use std::path::Path;
 
-const ELF_MAGIC: &[u8] = &[
-    0x7f, 0x45, 0x4c, 0x46, 0x02, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-];
+const ELF_MAGIC: &[u8] = &[0x7f, 0x45, 0x4c, 0x46];
 
 /// [ElfContent] provides a raw representation of .ko files in the kernel module tree.
 /// It allows access to the raw contents while also making it easy to decompress
@@ -42,11 +40,31 @@ impl ElfContent {
 
     /// Checks if file contents is an ELF file.
     pub fn check_elf(&self) -> bool {
-        check_magic_header(ELF_MAGIC, &self.bytes)
+        // Bytes 1-4: EI_MAGIC, `\x7fELF` in ASCII
+        if !check_magic_header(ELF_MAGIC, &self.bytes) {
+            return false;
+        }
+
+        // Byte 5: EI_CLASS, 0x1 = 32-bit, 0x2 = 64-bit module
+        if self.bytes[4] != 1 && self.bytes[4] != 2 {
+            return false;
+        }
+
+        // Byte 6: EI_DATA (endianness), 0x1 = little, 0x2 = big
+        if self.bytes[5] != 1 && self.bytes[5] != 2 {
+            return false;
+        }
+
+        // Byte 7: EI_VERSION (ELF version), 0x1 is the only valid value
+        if self.bytes[6] != 1 {
+            return false;
+        }
+
+        true
     }
 
     /// Parses the content as an ELF file.
-    pub fn read_elf(&self) -> Result<ElfBytes<LittleEndian>> {
+    pub fn read_elf(&self) -> Result<ElfBytes<AnyEndian>> {
         Ok(ElfBytes::minimal_parse(&self.bytes)?)
     }
 
