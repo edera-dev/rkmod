@@ -2,7 +2,7 @@ use crate::error::Result;
 use crate::util::open_file_bytes;
 use crate::{compression::CompressionFormat, util::check_magic_header};
 use bytes::{BufMut, Bytes, BytesMut};
-use elf::{endian::LittleEndian, ElfBytes};
+use elf::{endian::AnyEndian, ElfBytes};
 use std::io;
 use std::path::Path;
 
@@ -46,7 +46,7 @@ impl ElfContent {
     }
 
     /// Parses the content as an ELF file.
-    pub fn read_elf(&self) -> Result<ElfBytes<LittleEndian>> {
+    pub fn read_elf(&self) -> Result<ElfBytes<AnyEndian>> {
         Ok(ElfBytes::minimal_parse(&self.bytes)?)
     }
 
