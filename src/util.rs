@@ -48,12 +48,7 @@ pub fn current_kernel_release() -> Option<String> {
     unsafe {
         let mut uts: libc::utsname = std::mem::zeroed();
         let _ = libc::uname(std::ptr::addr_of_mut!(uts));
-        let release_bytes: Vec<u8> = uts
-            .release
-            .into_iter()
-            .map(|x| x as u8)
-            .take_while(|x| *x != 0)
-            .collect();
+        let release_bytes: Vec<u8> = uts.release.into_iter().take_while(|x| *x != 0).collect();
         String::from_utf8(release_bytes).ok()
     }
 }

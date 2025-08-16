@@ -1,9 +1,9 @@
-use crate::database::update::ModuleDatabaseUpdater;
 use crate::database::ModuleDatabase;
+use crate::database::update::ModuleDatabaseUpdater;
 use crate::error::Result;
 use crate::util::{open_file_bytes, path_to_module_name};
-use bstr::io::BufReadExt;
 use bstr::ByteSlice;
+use bstr::io::BufReadExt;
 use bytes::Bytes;
 use std::ops::Deref;
 use std::path::Path;

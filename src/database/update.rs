@@ -1,6 +1,6 @@
+use crate::database::ModuleDatabase;
 use crate::database::dependency::ModuleDependency;
 use crate::database::module::{ModuleForm, ModuleInfo};
-use crate::database::ModuleDatabase;
 use std::path::PathBuf;
 use std::sync::Arc;
 

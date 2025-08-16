@@ -1,4 +1,4 @@
-#[cfg(feature = "compression-used")]
+#[cfg(feature = "compression-core")]
 use bytes::Buf;
 use bytes::Bytes;
 use std::io::Read;
@@ -43,7 +43,7 @@ impl CompressionFormat {
         CompressionFormat::Zstd,
     ];
 
-    #[cfg(feature = "compression-used")]
+    #[cfg(feature = "compression-core")]
     pub fn magic(&self) -> &'static [u8] {
         match self {
             #[cfg(feature = "compression-gzip")]
@@ -57,7 +57,7 @@ impl CompressionFormat {
         }
     }
 
-    #[cfg(not(feature = "compression-used"))]
+    #[cfg(not(feature = "compression-core"))]
     pub fn magic(&self) -> &'static [u8] {
         unreachable!()
     }
@@ -78,7 +78,7 @@ impl CompressionFormat {
         None
     }
 
-    #[cfg(feature = "compression-used")]
+    #[cfg(feature = "compression-core")]
     pub fn reader(&self, bytes: Bytes) -> Result<Box<dyn Read>> {
         let reader = bytes.reader();
         Ok(match self {
@@ -96,7 +96,7 @@ impl CompressionFormat {
         })
     }
 
-    #[cfg(not(feature = "compression-used"))]
+    #[cfg(not(feature = "compression-core"))]
     pub fn reader(&self, _bytes: Bytes) -> Result<Box<dyn Read>> {
         unreachable!()
     }

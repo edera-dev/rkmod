@@ -6,7 +6,7 @@ fn main() {
     let path = PathBuf::from(path);
     let content = ElfContent::open(&path).expect("failed to open file");
     let compression = content.detect_compression();
-    println!("compression: {:?}", compression);
+    println!("compression: {compression:?}");
     let content = content.decompress().expect("failed to decompress");
     if !content.check_elf() {
         panic!("module is not an elf file");
@@ -17,7 +17,7 @@ fn main() {
     println!("header: {:?}", elf.ehdr);
     if let Some(segments) = elf.segments() {
         for segment in segments {
-            println!("segment: {:?}", segment);
+            println!("segment: {segment:?}");
         }
     }
 
@@ -35,7 +35,7 @@ fn main() {
             let name = name
                 .map(|name| name.to_string())
                 .unwrap_or_else(|| "unknown".to_string());
-            println!("section [{}]: {:?}", name, section);
+            println!("section [{name}]: {section:?}");
         }
     }
 }

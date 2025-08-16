@@ -1,8 +1,8 @@
 use easy_parallel::Parallel;
 use rkmod::cache::InternCache;
+use rkmod::database::ModuleDatabase;
 use rkmod::database::textual::builtins::TextualModuleBuiltins;
 use rkmod::database::textual::deps::TextualModuleDependencies;
-use rkmod::database::ModuleDatabase;
 use rkmod::object::KernelObject;
 use std::path::PathBuf;
 

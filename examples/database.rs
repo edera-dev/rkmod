@@ -1,6 +1,6 @@
 use rkmod::cache::InternCache;
-use rkmod::database::textual::TextualModuleDatabase;
 use rkmod::database::ModuleDatabase;
+use rkmod::database::textual::TextualModuleDatabase;
 use std::path::PathBuf;
 
 fn main() {
@@ -10,6 +10,6 @@ fn main() {
     let mut database = ModuleDatabase::new(cache);
     TextualModuleDatabase::load(path, &mut database).expect("failed to load module database");
     for module in database.modules().keys() {
-        println!("{}", module);
+        println!("{module}");
     }
 }

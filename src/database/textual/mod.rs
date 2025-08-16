@@ -1,7 +1,7 @@
+use crate::database::ModuleDatabase;
 use crate::database::textual::builtins::TextualModuleBuiltins;
 use crate::database::textual::deps::TextualModuleDependencies;
 use crate::database::textual::order::TextualModuleOrder;
-use crate::database::ModuleDatabase;
 use crate::error::Result;
 use std::path::Path;
 

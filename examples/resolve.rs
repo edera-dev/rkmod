@@ -25,9 +25,9 @@ fn main() {
             .is_live(module.as_ref())
             .expect("failed to check for live module")
         {
-            println!("live {}", module);
+            println!("live {module}");
             continue;
         }
-        println!("load {}", module);
+        println!("load {module}");
     }
 }

@@ -1,0 +1,13 @@
+version: 2
+updates:
+- package-ecosystem: "cargo"
+  directory: "/"
+  schedule:
+    interval: "daily"
+  groups:
+    dep-updates:
+      dependency-type: "production"
+      applies-to: "version-updates"
+    dev-updates:
+      dependency-type: "development"
+      applies-to: "version-updates"

@@ -1,6 +1,6 @@
 use crate::cache::InternCache;
-use crate::database::textual::TextualModuleDatabase;
 use crate::database::ModuleDatabase;
+use crate::database::textual::TextualModuleDatabase;
 use crate::error::{Error, Result};
 use crate::object::KernelObject;
 use crate::util::current_kernel_release;

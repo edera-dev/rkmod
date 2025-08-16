@@ -2,7 +2,7 @@ use crate::error::Result;
 use crate::util::open_file_bytes;
 use crate::{compression::CompressionFormat, util::check_magic_header};
 use bytes::{BufMut, Bytes, BytesMut};
-use elf::{endian::AnyEndian, ElfBytes};
+use elf::{ElfBytes, endian::AnyEndian};
 use std::io;
 use std::path::Path;
 
