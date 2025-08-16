@@ -1,0 +1,96 @@
+name: check
+on:
+  push:
+jobs:
+  rustfmt:
+    name: rustfmt
+    runs-on: ubuntu-latest
+    steps:
+      - name: harden runner
+        uses: step-security/harden-runner@0080882f6c36860b6ba35c610c98ce87d4e2f26f # v2.10.2
+        with:
+          egress-policy: audit
+      - name: checkout repository
+        uses: actions/checkout@6b42224f41ee5dfe5395e27c8b2746f1f9955030 # v4.2.0
+        with:
+          submodules: recursive
+          persist-credentials: false
+      - name: cargo fmt
+        run: cargo fmt --all --check -- --color always
+  shfmt:
+    name: shfmt
+    runs-on: ubuntu-latest
+    steps:
+      - name: harden runner
+        uses: step-security/harden-runner@0080882f6c36860b6ba35c610c98ce87d4e2f26f # v2.10.2
+        with:
+          egress-policy: audit
+      - name: checkout repository
+        uses: actions/checkout@6b42224f41ee5dfe5395e27c8b2746f1f9955030 # v4.2.0
+        with:
+          submodules: recursive
+          persist-credentials: false
+      - name: shfmt
+        run: |
+          GOBIN=/usr/local/bin go install mvdan.cc/sh/v3/cmd/shfmt@latest
+          shfmt --diff hack/*.sh
+  shellcheck:
+    name: shellcheck
+    runs-on: ubuntu-latest
+    steps:
+      - name: harden runner
+        uses: step-security/harden-runner@0080882f6c36860b6ba35c610c98ce87d4e2f26f # v2.10.2
+        with:
+          egress-policy: audit
+      - name: checkout repository
+        uses: actions/checkout@6b42224f41ee5dfe5395e27c8b2746f1f9955030 # v4.2.0
+        with:
+          submodules: recursive
+          persist-credentials: false
+      - name: shfmt
+        run: shellcheck -x hack/*.sh
+  build:
+    runs-on: ubuntu-latest
+    name: build
+    steps:
+      - name: harden runner
+        uses: step-security/harden-runner@0080882f6c36860b6ba35c610c98ce87d4e2f26f # v2.10.2
+        with:
+          egress-policy: audit
+      - name: checkout repository
+        uses: actions/checkout@6b42224f41ee5dfe5395e27c8b2746f1f9955030 # v4.2.0
+        with:
+          submodules: recursive
+          persist-credentials: false
+      - name: cargo build
+        run: cargo build --color always --profile dev-fast
+  test:
+    runs-on: ubuntu-latest
+    name: test
+    steps:
+      - name: harden runner
+        uses: step-security/harden-runner@0080882f6c36860b6ba35c610c98ce87d4e2f26f # v2.10.2
+        with:
+          egress-policy: audit
+      - name: checkout repository
+        uses: actions/checkout@6b42224f41ee5dfe5395e27c8b2746f1f9955030 # v4.2.0
+        with:
+          submodules: recursive
+          persist-credentials: false
+      - name: cargo test
+        run: cargo test --color always --profile dev-fast
+  clippy:
+    runs-on: ubuntu-latest
+    name: clippy
+    steps:
+      - name: harden runner
+        uses: step-security/harden-runner@0080882f6c36860b6ba35c610c98ce87d4e2f26f # v2.10.2
+        with:
+          egress-policy: audit
+      - name: checkout repository
+        uses: actions/checkout@6b42224f41ee5dfe5395e27c8b2746f1f9955030 # v4.2.0
+        with:
+          submodules: recursive
+          persist-credentials: false
+      - name: cargo clippy
+        run: cargo clippy --color always --profile dev-fast --keep-going --all -- -D clippy::all
