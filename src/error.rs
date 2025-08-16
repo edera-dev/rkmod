@@ -17,6 +17,8 @@ pub enum Error {
     #[error("unknown kernel release")]
     #[cfg(feature = "current-kernel")]
     UnknownKernelRelease,
+    #[error("unsupported operation")]
+    UnsupportedOperation,
 }
 
 pub type Result<T> = std::result::Result<T, Error>;

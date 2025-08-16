@@ -1,10 +1,12 @@
-use rkmod::cache::InternCache;
 use rkmod::error::Result;
-use rkmod::object::KernelObject;
-use std::ffi::CString;
-use std::path::Path;
 
+#[cfg(all(feature = "module-manager", target_os = "linux"))]
 fn main() -> Result<()> {
+    use rkmod::cache::InternCache;
+    use rkmod::object::KernelObject;
+    use std::ffi::CString;
+    use std::path::Path;
+
     let args = std::env::args().skip(1).collect::<Vec<_>>();
     let path = args.first().expect("module path required");
     let path = Path::new(&path);
@@ -16,4 +18,11 @@ fn main() -> Result<()> {
         object.insert_into_kernel(cmdline)?;
     }
     Ok(())
+}
+
+#[cfg(not(all(feature = "module-manager", target_os = "linux")))]
+fn main() -> Result<()> {
+    use rkmod::error::Error;
+
+    Err(Error::UnsupportedOperation)
 }

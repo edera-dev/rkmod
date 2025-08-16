@@ -18,10 +18,12 @@ pub mod error;
 pub mod util;
 
 pub mod cache;
+#[cfg(target_os = "linux")]
 pub mod controller;
 pub mod database;
 pub mod directory;
 #[cfg(feature = "module-manager")]
+#[cfg(target_os = "linux")]
 pub mod manager;
 #[cfg(feature = "file-mmap")]
 pub mod mmap;
