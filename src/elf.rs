@@ -64,7 +64,7 @@ impl ElfContent {
     }
 
     /// Parses the content as an ELF file.
-    pub fn read_elf(&self) -> Result<ElfBytes<AnyEndian>> {
+    pub fn read_elf(&'_ self) -> Result<ElfBytes<'_, AnyEndian>> {
         Ok(ElfBytes::minimal_parse(&self.bytes)?)
     }
 
