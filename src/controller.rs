@@ -1,9 +1,11 @@
 use crate::error::Result;
 use std::fs;
 use std::path::PathBuf;
+use std::sync::Arc;
 
+#[derive(Clone)]
 pub struct SystemModuleController {
-    root: PathBuf,
+    root: Arc<PathBuf>,
 }
 
 impl Default for SystemModuleController {
@@ -14,10 +16,12 @@ impl Default for SystemModuleController {
 
 impl SystemModuleController {
     pub fn new(root: impl Into<PathBuf>) -> Self {
-        Self { root: root.into() }
+        Self {
+            root: Arc::new(root.into()),
+        }
     }
 
-    pub fn root(&self) -> &PathBuf {
+    pub fn root(&self) -> &Arc<PathBuf> {
         &self.root
     }
 
