@@ -45,10 +45,32 @@ pub fn path_to_module_name(path: impl AsRef<Path>) -> String {
 #[cfg(feature = "current-kernel")]
 #[cfg(target_os = "linux")]
 pub fn current_kernel_release() -> Option<String> {
+    // workaround for clippy trying to be helpful...
+    trait CanRepresentU8 {
+        fn as_u8(&self) -> u8;
+    }
+
+    impl CanRepresentU8 for u8 {
+        fn as_u8(&self) -> u8 {
+            *self
+        }
+    }
+
+    impl CanRepresentU8 for i8 {
+        fn as_u8(&self) -> u8 {
+            *self as u8
+        }
+    }
+
     unsafe {
         let mut uts: libc::utsname = std::mem::zeroed();
         let _ = libc::uname(std::ptr::addr_of_mut!(uts));
-        let release_bytes: Vec<u8> = uts.release.into_iter().take_while(|x| *x != 0).collect();
+        let release_bytes: Vec<u8> = uts
+            .release
+            .into_iter()
+            .take_while(|x| *x != 0)
+            .map(|x| x.as_u8())
+            .collect();
         String::from_utf8(release_bytes).ok()
     }
 }
