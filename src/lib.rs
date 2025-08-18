@@ -6,26 +6,18 @@
 //! signed modules properly with validation.
 pub mod compression;
 
-/// content: provide raw file content for kmods
-///
-/// One interesting challenge of interacting with kernel modules is
-/// that they can be compressed or just plain ELF files. The APIs
-/// in this Rust module provide access to raw file contents using
-/// the [bytes] crate, which provides cheaply cloneable access to
-/// bytes.
-pub mod elf;
 pub mod error;
 pub mod util;
 
 pub mod cache;
-#[cfg(target_os = "linux")]
+#[cfg(all(target_os = "linux", feature = "controller"))]
 pub mod controller;
+#[cfg(feature = "database")]
 pub mod database;
-pub mod directory;
-#[cfg(feature = "module-manager")]
-#[cfg(target_os = "linux")]
+#[cfg(all(target_os = "linux", feature = "module-manager"))]
 pub mod manager;
 #[cfg(feature = "file-mmap")]
 pub mod mmap;
 pub mod object;
-pub mod symbol;
+#[cfg(feature = "signature-core")]
+pub mod signature;

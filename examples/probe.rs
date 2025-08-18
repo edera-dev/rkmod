@@ -1,6 +1,6 @@
 use rkmod::cache::InternCache;
 use rkmod::controller::SystemModuleController;
-use rkmod::directory::ModuleDirectory;
+use rkmod::database::directory::ModuleDirectory;
 use rkmod::manager::ModuleManager;
 use rkmod::util::normalize_module_name;
 use std::sync::Arc;

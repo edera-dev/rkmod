@@ -1,5 +1,5 @@
 use rkmod::cache::InternCache;
-use rkmod::directory::ModuleDirectory;
+use rkmod::database::directory::ModuleDirectory;
 use std::path::PathBuf;
 
 fn main() {

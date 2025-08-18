@@ -4,6 +4,7 @@ use indexmap::IndexMap;
 use std::sync::Arc;
 
 pub mod dependency;
+pub mod directory;
 pub mod module;
 pub mod resolution;
 pub mod textual;

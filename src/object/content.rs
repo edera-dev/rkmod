@@ -2,23 +2,22 @@ use crate::error::Result;
 use crate::util::open_file_bytes;
 use crate::{compression::CompressionFormat, util::check_magic_header};
 use bytes::{BufMut, Bytes, BytesMut};
-use elf::{ElfBytes, endian::AnyEndian};
 use std::io;
 use std::path::Path;
 
 const ELF_MAGIC: &[u8] = &[0x7f, 0x45, 0x4c, 0x46];
 
-/// [ElfContent] provides a raw representation of .ko files in the kernel module tree.
-/// It allows access to the raw contents while also making it easy to decompress
+/// [KernelObjectContent] provides a signature representation of .ko files in the kernel module tree.
+/// It allows access to the signature contents while also making it easy to decompress
 /// the compressed contents of files.
 #[derive(Clone)]
-pub struct ElfContent {
-    /// The raw bytes of the kmod.
+pub struct KernelObjectContent {
+    /// The signature bytes of the kmod.
     bytes: Bytes,
 }
 
-impl ElfContent {
-    /// Constructs a [ElfContent] from the specified [bytes].
+impl KernelObjectContent {
+    /// Constructs a [KernelObjectContent] from the specified [bytes].
     pub fn new(bytes: Bytes) -> Self {
         Self { bytes }
     }
@@ -63,11 +62,6 @@ impl ElfContent {
         true
     }
 
-    /// Parses the content as an ELF file.
-    pub fn read_elf(&'_ self) -> Result<ElfBytes<'_, AnyEndian>> {
-        Ok(ElfBytes::minimal_parse(&self.bytes)?)
-    }
-
     /// Determines the compression in use on the file content, if any.
     pub fn detect_compression(&self) -> Option<CompressionFormat> {
         CompressionFormat::detect(&self.bytes)
@@ -77,7 +71,7 @@ impl ElfContent {
     /// If compression is not in use, this method will return [Ok(self)[.
     /// The [CompressionFormat] is used to decompress, utilizing
     /// [Self::detect_compression] to figure out the compression format.
-    pub fn decompress(self) -> Result<ElfContent> {
+    pub fn decompress(self) -> Result<KernelObjectContent> {
         let Some(compression) = self.detect_compression() else {
             return Ok(self);
         };
@@ -86,6 +80,14 @@ impl ElfContent {
         let bytes = BytesMut::new();
         let mut writer = bytes.writer();
         io::copy(&mut reader, &mut writer)?;
-        Ok(ElfContent::new(writer.into_inner().freeze()))
+        Ok(KernelObjectContent::new(writer.into_inner().freeze()))
+    }
+}
+
+#[cfg(feature = "elf")]
+impl KernelObjectContent {
+    /// Parses the content as an ELF file.
+    pub fn read_elf(&'_ self) -> Result<elf::ElfBytes<'_, elf::endian::AnyEndian>> {
+        Ok(elf::ElfBytes::minimal_parse(&self.bytes)?)
     }
 }

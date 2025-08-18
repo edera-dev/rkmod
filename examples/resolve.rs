@@ -1,6 +1,6 @@
 use rkmod::cache::InternCache;
+use rkmod::database::directory::ModuleDirectory;
 use rkmod::database::resolution::ModuleResolutionSet;
-use rkmod::directory::ModuleDirectory;
 use rkmod::error::Result;
 use rkmod::util::normalize_module_name;
 use std::path::Path;

@@ -4,6 +4,7 @@ use thiserror::Error;
 #[derive(Error, Debug)]
 pub enum Error {
     #[error("elf parse error: {0}")]
+    #[cfg(feature = "elf")]
     ElfParse(#[from] elf::ParseError),
     #[error("io error: {0}")]
     Io(#[from] std::io::Error),
@@ -19,6 +20,9 @@ pub enum Error {
     UnknownKernelRelease,
     #[error("unsupported operation")]
     UnsupportedOperation,
+    #[error("data decode error: {0}")]
+    #[cfg(feature = "signature-core")]
+    DataDecodeError(bytemuck::PodCastError),
 }
 
 pub type Result<T> = std::result::Result<T, Error>;

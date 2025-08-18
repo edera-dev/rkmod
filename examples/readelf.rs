@@ -1,10 +1,10 @@
-use rkmod::elf::ElfContent;
+use rkmod::object::content::KernelObjectContent;
 use std::path::PathBuf;
 
 fn main() {
     let path = std::env::args().nth(1).expect("file path required");
     let path = PathBuf::from(path);
-    let content = ElfContent::open(&path).expect("failed to open file");
+    let content = KernelObjectContent::open(&path).expect("failed to open file");
     let compression = content.detect_compression();
     println!("compression: {compression:?}");
     let content = content.decompress().expect("failed to decompress");

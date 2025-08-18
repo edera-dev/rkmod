@@ -1,7 +1,7 @@
 use crate::controller::SystemModuleController;
+use crate::database::directory::ModuleDirectory;
 use crate::database::module::ModuleForm;
 use crate::database::resolution::ModuleResolutionSet;
-use crate::directory::ModuleDirectory;
 use crate::error::{Error, Result};
 use std::ffi::CString;
 use std::sync::Arc;

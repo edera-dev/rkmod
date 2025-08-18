@@ -1,6 +1,6 @@
 use rkmod::cache::InternCache;
 use rkmod::controller::SystemModuleController;
-use rkmod::directory::ModuleDirectory;
+use rkmod::database::directory::ModuleDirectory;
 
 fn main() {
     let directory =
