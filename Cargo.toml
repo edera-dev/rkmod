@@ -188,4 +188,4 @@ required-features = ["elf", "signature-all"]
 [[example]]
 name = "resolve"
 path = "examples/resolve.rs"
-required-features = ["module-manager"]
+required-features = ["database"]
