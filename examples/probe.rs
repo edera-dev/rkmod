@@ -1,7 +1,7 @@
 use rkmod::cache::InternCache;
 use rkmod::controller::SystemModuleController;
 use rkmod::database::directory::ModuleDirectory;
-use rkmod::manager::ModuleManager;
+use rkmod::manager::{ModuleManager, ModuleParameterSet};
 use rkmod::util::normalize_module_name;
 use std::sync::Arc;
 
@@ -14,6 +14,7 @@ fn main() {
 
     let directory =
         ModuleDirectory::current(cache.clone()).expect("failed to load module directory");
-    let manager = ModuleManager::new(directory, SystemModuleController::default());
+    let parameters = ModuleParameterSet::new();
+    let manager = ModuleManager::new(directory, SystemModuleController::default(), parameters);
     manager.probe(&modules).expect("failed to probe modules");
 }
