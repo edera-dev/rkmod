@@ -11,6 +11,9 @@ pub enum Error {
     #[error("nix error: {0}")]
     #[cfg(feature = "module-manager")]
     NixError(#[from] nix::errno::Errno),
+    #[error("c string conversion error: {0}")]
+    #[cfg(feature = "module-manager")]
+    NulError(std::ffi::NulError),
     #[error("dependency loop found on {0}")]
     DependencyLoop(Arc<String>),
     #[error("dependency missing: {0}")]
