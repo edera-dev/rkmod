@@ -99,14 +99,14 @@ features = ["zlib-rs"]
 optional = true
 
 [dependencies.indexmap]
-version = "2.10.0"
+version = "2.11.4"
 
 [dependencies.libc]
-version = "0.2.175"
+version = "0.2.176"
 optional = true
 
 [dependencies.memmap2]
-version = "0.9.7"
+version = "0.9.8"
 optional = true
 
 [dependencies.nix]
@@ -115,7 +115,7 @@ features = ["kmod"]
 optional = true
 
 [dependencies.thiserror]
-version = "2.0.14"
+version = "2.0.16"
 
 [dependencies.xz2]
 version = "0.1.7"
