@@ -102,7 +102,7 @@ optional = true
 version = "2.12.1"
 
 [dependencies.libc]
-version = "0.2.178"
+version = "0.2.179"
 optional = true
 
 [dependencies.memmap2]
