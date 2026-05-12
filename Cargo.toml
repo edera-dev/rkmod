@@ -110,7 +110,7 @@ version = "0.9.10"
 optional = true
 
 [dependencies.nix]
-version = "0.31.2"
+version = "0.31.3"
 features = ["kmod"]
 optional = true
 
