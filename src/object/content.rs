@@ -44,6 +44,11 @@ impl KernelObjectContent {
             return false;
         }
 
+        // Need at least the e_ident fields read below (EI_CLASS, EI_DATA, EI_VERSION).
+        if self.bytes.len() < 7 {
+            return false;
+        }
+
         // Byte 5: EI_CLASS, 0x1 = 32-bit, 0x2 = 64-bit module
         if self.bytes[4] != 1 && self.bytes[4] != 2 {
             return false;
