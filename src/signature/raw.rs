@@ -67,8 +67,10 @@ impl RawKernelObjectSignature {
         let header = bytemuck::try_pod_read_unaligned::<RawKernelObjectSignatureHeader>(header)
             .map_err(Error::DataDecodeError)?;
         let signature_length = header.signature_length() as usize;
-        let total_length =
-            signature_length + header.signer_length as usize + header.key_id_length as usize;
+        let total_length = signature_length
+            + header.signer_length as usize
+            + header.key_id_length as usize
+            + size_of::<RawKernelObjectSignatureHeader>();
         if signature_length == 0 || (total_length > before_magic.len()) {
             return Ok(Some(RawKernelObjectSignature {
                 header,
