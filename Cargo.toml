@@ -71,15 +71,15 @@ signature-pkcs7 = [
 ]
 
 [dependencies.bstr]
-version = "1.12.1"
+version = "1.13.0"
 
 [dependencies.bytemuck]
-version = "1.25.0"
+version = "1.25.1"
 features = ["derive"]
 optional = true
 
 [dependencies.bytes]
-version = "1.11.1"
+version = "1.12.1"
 
 [dependencies.cms]
 version = "0.2.3"
@@ -106,7 +106,7 @@ version = "0.2.186"
 optional = true
 
 [dependencies.memmap2]
-version = "0.9.10"
+version = "0.9.11"
 optional = true
 
 [dependencies.nix]
